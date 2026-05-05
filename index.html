@@ -1,0 +1,525 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aguachiles Alchile 🦐</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- BOTÓN FLOTANTE WHATSAPP -->
+<button class="wa-float" onclick="abrirWA('Hola! Me interesa hacer un pedido de Aguachiles Alchile')" title="Escríbenos por WhatsApp">
+  💬
+</button>
+
+<nav>
+  <a href="#" class="nav-logo">🦐 Aguachiles Alchile</a>
+  <ul class="nav-links">
+    <li><a href="#productos">Menú</a></li>
+    <li><a href="#arma">Arma el tuyo</a></li>
+    <li><a href="#paquetes">Paquetes</a></li>
+    <li><a href="#envios">Envíos</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+  </ul>
+  <button class="cart-btn-nav" onclick="abrirCarrito()">
+    🛒 Carrito
+    <span class="cart-badge" id="cart-badge">0</span>
+  </button>
+</nav>
+
+<!-- OVERLAY -->
+<div class="cart-overlay" id="cart-overlay" onclick="cerrarCarrito()"></div>
+
+<!-- DRAWER DEL CARRITO -->
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-drawer-header">
+    <h2>🛒 Tu pedido</h2>
+    <button class="cart-close" onclick="cerrarCarrito()">✕</button>
+  </div>
+  <div class="cart-steps">
+    <div class="cart-step active" id="step-tab-1">1 · Carrito</div>
+    <div class="cart-step" id="step-tab-2">2 · Tus datos</div>
+    <div class="cart-step" id="step-tab-3">3 · ¡Listo!</div>
+  </div>
+  <div class="cart-body" id="cart-step-1">
+    <div id="cart-items-list"></div>
+    <div id="cart-total-wrap" style="display:none;">
+      <div class="cart-total-bar">
+        <span class="cart-total-label" id="cart-total-label">Total con envío</span>
+        <span class="cart-total-val" id="cart-total-val">$0</span>
+      </div>
+      <p class="cart-shipping-note" id="cart-shipping-note">Selecciona una zona de envío en el siguiente paso.</p>
+    </div>
+  </div>
+  <div class="cart-body" id="cart-step-2" style="display:none;">
+    <div class="cart-resumen" id="cart-resumen-mini"></div>
+    <div class="cart-form">
+      <div class="form-group">
+        <label>Tu nombre completo</label>
+        <input type="text" id="cart-nombre" placeholder="¿Cómo te llamamos?">
+      </div>
+      <div class="form-group">
+        <label>Tu WhatsApp</label>
+        <input type="tel" id="cart-telefono" placeholder="442 000 0000">
+      </div>
+      <div class="form-group">
+        <label>Zona de envío</label>
+        <select id="cart-zona-envio" onchange="selectDeliveryZone(this.value)">
+          <option value="">Elige tu zona</option>
+          <option value="centro">Centro histórico / zona cercana — $35</option>
+          <option value="sur">Corregidora / Candiles — $50</option>
+          <option value="norte">Juriquilla / Antea — $55</option>
+          <option value="este">El Refugio / Zibatá — $60</option>
+          <option value="confirmar">Fuera de zona — por confirmar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>¿Dónde te lo llevamos?</label>
+        <textarea id="cart-direccion" placeholder="Calle, número, colonia, referencias…" style="min-height:80px;resize:vertical;padding:0.8rem 1rem;border:2.5px solid rgba(0,60,130,0.15);border-radius:0.75rem;background:#fff;font-family:'Nunito',sans-serif;font-size:0.92rem;width:100%;box-sizing:border-box;"></textarea>
+      </div>
+      <div class="form-group">
+        <label>¿Hora de entrega? (opcional)</label>
+        <input type="text" id="cart-hora" placeholder="Ej: mañana a las 2pm">
+      </div>
+      <div class="form-group">
+        <label>¿Alguna nota extra? (opcional)</label>
+        <input type="text" id="cart-nota" placeholder="Alergias, preferencias…">
+      </div>
+    </div>
+  </div>
+  <div class="cart-body" id="cart-step-3" style="display:none;">
+    <div class="cart-success">
+      <h3>¡Pedido enviado!</h3>
+      <p>Se abrió WhatsApp con todos los detalles. Solo confirma el mensaje y te atendemos al momento.</p>
+    </div>
+  </div>
+  <div class="cart-drawer-footer" id="cart-footer">
+    <button class="btn-cart-next" id="btn-paso-2" onclick="irPaso2()">Ver resumen y datos →</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-badge">🌊 Sabor costero en Querétaro</span>
+  <h1>Aguachiles<br><span>Alchile</span></h1>
+  <p class="hero-sub">Aguachiles frescos por pedido: elige tu salsa, ajusta el picante y confirma por WhatsApp.</p>
+  <div class="hero-chips">
+    <span>🦐 Camarón fresco</span>
+    <span>🌶️ Salsas caseras</span>
+    <span>📍 Entrega en Qro</span>
+  </div>
+  <div class="hero-btns">
+    <a href="#productos" class="btn-sol">Ver menú</a>
+    <a href="#pedidos" class="btn-mar">Hacer un pedido</a>
+    <button class="btn-wa-direct" onclick="abrirWA('Hola! Quiero hacer un pedido directo de Aguachiles Alchile 🦐')">Pedir por WhatsApp</button>
+  </div>
+</div>
+
+<!-- OLA -->
+<div class="ola">
+  <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,40 C360,90 1080,0 1440,50 L1440,0 L0,0 Z" fill="#48CAE4"/>
+  </svg>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-num">+100</span><span class="stat-label">Clientes felices</span></div>
+  <div class="stat-item"><span class="stat-num">100%</span><span class="stat-label">Natural y fresco</span></div>
+  <div class="stat-item"><span class="stat-num">4</span><span class="stat-label">Sabores únicos</span></div>
+  <div class="stat-item"><span class="stat-num">24h</span><span class="stat-label">Entrega en Qro</span></div>
+</div>
+
+<!-- PRODUCTOS -->
+<section id="productos">
+  <div class="section-header">
+    <span class="section-tag">🦐 Nuestro menú</span>
+    <h2 class="section-h2">Elige tu sabor favorito 🌶️</h2>
+    <p class="price-note">Precios por porción. El envío se cotiza según tu zona en Querétaro.</p>
+  </div>
+  <div class="products-grid">
+    <div class="product-card pc-camar">
+      <span class="prod-sticker">🖤</span>
+      <div class="prod-body">
+        <div class="spicy-bar"><span class="on"></span><span class="on"></span><span></span></div>
+        <p class="prod-name">Camarón Negro</p>
+        <p class="prod-desc">El clásico de Sinaloa. Camarones frescos bañados en salsa negra de soya con limón y chile. Intenso y adictivo.</p>
+        <div class="prod-footer"><span class="prod-price">$150 <small>por porción</small></span><span class="prod-badge">⭐ Favorito</span></div>
+        <button class="btn-agregar" onclick="agregarAlCarrito('Camarón Negro',150,'🦐','Negro')">Agregar al carrito</button>
+      </div>
+    </div>
+    <div class="product-card" style="background:linear-gradient(135deg,#FDECEA,#F8BBD0);border:3px solid #F48FB1;">
+      <span class="prod-sticker">🌶️</span>
+      <div class="prod-body">
+        <div class="spicy-bar"><span class="on"></span><span class="on"></span><span class="on"></span></div>
+        <p class="prod-name">Camarón Rojo</p>
+        <p class="prod-desc">Salsa roja de chile de árbol y morita. Picante con carácter, color vivo y sabor que se queda.</p>
+        <div class="prod-footer"><span class="prod-price">$140 <small>por porción</small></span><span class="prod-badge">🔥 Picante</span></div>
+        <button class="btn-agregar" onclick="agregarAlCarrito('Camarón Rojo',140,'🦐','Rojo')">Agregar al carrito</button>
+      </div>
+    </div>
+    <div class="product-card" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border:3px solid #81C784;">
+      <span class="prod-sticker">🍋</span>
+      <div class="prod-body">
+        <div class="spicy-bar"><span class="on"></span><span></span><span></span></div>
+        <p class="prod-name">Camarón Verde</p>
+        <p class="prod-desc">Salsa verde con tomatillo, cilantro y chile serrano. Fresco, ácido y suavecito. Ideal para los que no le entran al picante.</p>
+        <div class="prod-footer"><span class="prod-price">$140 <small>por porción</small></span><span class="prod-badge">🌿 Suave</span></div>
+        <button class="btn-agregar" onclick="agregarAlCarrito('Camarón Verde',140,'🦐','Verde')">Agregar al carrito</button>
+      </div>
+    </div>
+    <div class="product-card" style="background:linear-gradient(135deg,#FFF9C4,#FFF176);border:3px solid #FDD835;">
+      <span class="prod-sticker">✨</span>
+      <div class="prod-body">
+        <div class="spicy-bar"><span class="on"></span><span class="on"></span><span></span></div>
+        <p class="prod-name">Camarón Ceniza</p>
+        <p class="prod-desc">Habanero amarillo con salsas. Picante y exótico. La sorpresa del menú.</p>
+        <div class="prod-footer"><span class="prod-price">$160 <small>por porción</small></span><span class="prod-badge">✨ Especial</span></div>
+        <button class="btn-agregar" onclick="agregarAlCarrito('Camarón Ceniza',160,'🦐','Ceniza')">Agregar al carrito</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARMA TU AGUACHILE -->
+<section id="arma">
+  <div class="section-header">
+    <span class="section-tag">🎨 Personaliza tu pedido</span>
+    <h2 class="section-h2">Arma tu aguachile</h2>
+  </div>
+  <div class="builder-wrap">
+    <div class="builder-grid">
+      <div class="builder-left">
+
+        <!-- Camarón fijo -->
+        <div class="builder-fresh">
+          <span class="builder-fresh-icon">🦐</span>
+          <div>
+            <p style="font-weight:800;color:var(--mar-oscuro);font-size:1rem;">Camarón fresco</p>
+            <p style="font-size:0.8rem;color:var(--gris);">100% camarón — nuestro único y delicioso ingrediente</p>
+          </div>
+          <span style="margin-left:auto;background:var(--mar);color:#fff;font-size:0.72rem;font-weight:800;padding:0.2rem 0.7rem;border-radius:2rem;">✓ Incluido</span>
+        </div>
+
+        <!-- Tipo de salsa -->
+        <div>
+          <p class="builder-block-title">🌶️ Tipo de aguachile</p>
+          <div class="opts-row" id="tipo-opts">
+            <button class="opt-btn" onclick="selTipo(this,'Negro','','negro')">Negro</button>
+            <button class="opt-btn" onclick="selTipo(this,'Rojo','','rojo')">Rojo</button>
+            <button class="opt-btn" onclick="selTipo(this,'Verde','','verde')">Verde</button>
+            <button class="opt-btn" onclick="selTipo(this,'Ceniza','','mar')">Ceniza</button>
+          </div>
+        </div>
+
+        <!-- Medidor de picante -->
+        <div>
+          <p class="builder-block-title">🔥 Nivel de picante</p>
+          <div class="picante-meter">
+            <div class="picante-labels">
+              <span>Sin picante</span><span>Medio</span><span>Máximo</span>
+            </div>
+            <div class="picante-track">
+              <div class="picante-fill" id="picante-fill"></div>
+              <input type="range" min="0" max="4" value="0" id="picante-slider" oninput="updatePicante(this.value)">
+            </div>
+            <div class="picante-display" id="picante-display">
+              <span class="picante-label" id="picante-label">Sin picante — tranquilo</span>
+            </div>
+            <div class="picante-chiles" id="picante-chiles">
+              <span class="chile-dot off"></span><span class="chile-dot off"></span><span class="chile-dot off"></span><span class="chile-dot off"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Extras -->
+        <div>
+          <p class="builder-block-title">🥑 Extras</p>
+          <div class="opts-row">
+            <button class="toggle-btn" onclick="toggleExtra(this,'Cebolla')">Cebolla</button>
+            <button class="toggle-btn" onclick="toggleExtra(this,'Aguacate')">Aguacate</button>
+            <button class="toggle-btn" onclick="toggleExtra(this,'Pepino')">Pepino</button>
+            <button class="toggle-btn" onclick="toggleExtra(this,'Limón extra')">Limón extra</button>
+            <button class="toggle-btn" onclick="toggleExtra(this,'Cilantro')">Cilantro</button>
+            <button class="toggle-btn" onclick="toggleExtra(this,'Tostadas')">Tostadas</button>
+          </div>
+        </div>
+
+        <!-- Cantidad -->
+        <div>
+          <p class="builder-block-title">📦 Porciones</p>
+          <div style="display:flex;align-items:center;gap:1rem;">
+            <button onclick="cambiarCant(-1)" style="width:38px;height:38px;border-radius:50%;border:2.5px solid var(--mar);background:#fff;font-size:1.2rem;font-weight:800;color:var(--mar);cursor:pointer;">−</button>
+            <span id="cant-num" style="font-size:1.5rem;font-weight:800;min-width:2rem;text-align:center;">1</span>
+            <button onclick="cambiarCant(1)" style="width:38px;height:38px;border-radius:50%;border:2.5px solid var(--mar);background:var(--mar);font-size:1.2rem;font-weight:800;color:#fff;cursor:pointer;">+</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="builder-right">
+        <div class="bowl-card" id="bowl-card">
+          <p class="bowl-title" id="bowl-name">Tu aguachile</p>
+          <div class="bowl-tags" id="bowl-tags">
+            <span class="bowl-empty">Elige tus ingredientes</span>
+          </div>
+          <p class="bowl-price-line" id="bowl-price">$—</p>
+          <button class="btn-add-order" onclick="irAPedido()">
+            Agregar al carrito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OLA 2 -->
+<div class="ola" style="background:var(--blanco);">
+  <svg viewBox="0 0 1440 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,35 C480,70 960,0 1440,40 L1440,70 L0,70 Z" fill="#FFF8E1"/>
+  </svg>
+</div>
+
+<!-- PAQUETES -->
+<section id="paquetes">
+  <div class="section-header">
+    <span class="section-tag">🎉 Para grupos y eventos</span>
+    <h2 class="section-h2">Paquetes especiales</h2>
+    <p class="price-note">Ideales para compartir. Precios de paquete sin envío.</p>
+  </div>
+  <div class="paquetes-grid">
+
+    <div class="paq-card">
+      <div class="paq-header">
+        <p class="paq-name">Paquete DUO</p>
+        <p class="paq-personas">Para 2 personas</p>
+      </div>
+      <p class="paq-price">$265 <span>/ paquete</span></p>
+      <div class="paq-includes">
+        <p>Incluye:</p>
+        <div class="paq-item"><span class="check">✓</span> 2 porciones de aguachile de camarón</div>
+        <div class="paq-item"><span class="check">✓</span> Tostadas</div>
+        <div class="paq-item"><span class="check">✓</span> Bolsa de presentación</div>
+      </div>
+      <button class="btn-paq" onclick="irAPedidoPaquete('Paquete DUO — $265 + envío (2 personas)')">Pedir directo</button>
+      <button class="btn-agregar-paq" onclick="agregarAlCarrito('Paquete DUO',265,'🌊','2 personas')">Agregar al carrito</button>
+    </div>
+
+    <div class="paq-card destacado">
+      <span class="paq-badge-top">⭐ Más pedido</span>
+      <div class="paq-header">
+        <p class="paq-name">Paquete Familiar</p>
+        <p class="paq-personas">Para 4–5 personas</p>
+      </div>
+      <p class="paq-price">$670 <span>/ paquete</span></p>
+      <div class="paq-includes">
+        <p>Incluye:</p>
+        <div class="paq-item"><span class="check">✓</span> 3 Aguachiles Grandes (a elegir estilo)</div>
+        <div class="paq-item"><span class="check">✓</span> Tostadas</div>
+        <div class="paq-item"><span class="check">✓</span> Pepino, cebolla y aguacate</div>
+      </div>
+      <button class="btn-paq" onclick="irAPedidoPaquete('Paquete Familiar — $670 + envío (4-5 personas)')">Pedir directo</button>
+      <button class="btn-agregar-paq" onclick="agregarAlCarrito('Paquete Familiar',670,'🦐','4-5 personas')">Agregar al carrito</button>
+    </div>
+
+    <div class="paq-card">
+      <div class="paq-header">
+        <p class="paq-name">Paquete Degustación</p>
+        <p class="paq-personas">Para degustar nuestras diferentes especialidades </p>
+      </div>
+      <p class="paq-price">$390 <span>/ paquete</span></p>
+      <div class="paq-includes">
+        <p>Incluye:</p>
+        <div class="paq-item"><span class="check">✓</span> 3 aguachiles individuales (elige los sabores)</div>
+        <div class="paq-item"><span class="check">✓</span> Todos los extras disponibles</div>
+        <div class="paq-item"><span class="check">✓</span> Presentación en charola</div>
+        <div class="paq-item"><span class="check">✓</span> Entrega coordinada</div>
+      </div>
+      <button class="btn-paq gold" onclick="irAPedidoPaquete('Paquete Degustación — $390 + envío')">Pedir directo</button>
+      <button class="btn-agregar-paq" onclick="agregarAlCarrito('Paquete Degustación',390,'🎊','3 porciones individuales')">Agregar al carrito</button>
+    </div>
+
+    <div class="paq-card" style="border-color:var(--rojo);background:linear-gradient(135deg,#fff,#fff5f5);">
+      <div class="paq-header">
+        <p class="paq-name">Paquete Personalizado</p>
+        <p class="paq-personas">¡Tú decides todo!</p>
+      </div>
+      <p class="paq-price" style="color:var(--mar-oscuro);">A tu medida</p>
+      <div class="paq-includes">
+        <p>Tú eliges:</p>
+        <div class="paq-item"><span class="check">✓</span> Cantidad de porciones</div>
+        <div class="paq-item"><span class="check">✓</span> Estilo de aguachile y extras</div>
+        <div class="paq-item"><span class="check">✓</span> Nivel de picante</div>
+        <div class="paq-item"><span class="check">✓</span> Fecha y horario de entrega</div>
+      </div>
+      <button class="btn-paq" style="background:var(--rojo);box-shadow:0 3px 0 #7a0010;" onclick="irAPedidoPaquete('Paquete Personalizado')">Pedir directo</button>
+      <button class="btn-agregar-paq" style="background:var(--mar-oscuro);" onclick="agregarAlCarrito('Paquete Personalizado',0,'🌶️','A tu medida')">Agregar al carrito</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ENVIOS -->
+<section id="envios">
+  <div class="section-header">
+    <span class="section-tag">📍 Cobertura en Querétaro</span>
+    <h2 class="section-h2">Mapa de envío Qro</h2>
+    <p class="price-note">Selecciona tu zona de Querétaro para calcular el envío. Si no aparece tu colonia, lo confirmamos por WhatsApp.</p>
+  </div>
+  <div class="delivery-layout">
+    <div class="delivery-map" aria-label="Mapa de zonas de envío en Querétaro">
+      <div class="map-title">Querétaro, Qro.</div>
+      <div class="map-road road-57">Carretera 57</div>
+      <div class="map-road road-5f">5 de Febrero</div>
+      <button class="zone zone-centro" data-zone="centro" onclick="selectDeliveryZone('centro')">
+        <span>📍 Centro histórico</span>
+        <strong>$35</strong>
+      </button>
+      <button class="zone zone-sur" data-zone="sur" onclick="selectDeliveryZone('sur')">
+        <span>🏡 Corregidora / Candiles</span>
+        <strong>$50</strong>
+      </button>
+      <button class="zone zone-norte" data-zone="norte" onclick="selectDeliveryZone('norte')">
+        <span>🏙️ Juriquilla / Antea</span>
+        <strong>$55</strong>
+      </button>
+      <button class="zone zone-este" data-zone="este" onclick="selectDeliveryZone('este')">
+        <span>🌅 El Refugio / Zibatá</span>
+        <strong>$60</strong>
+      </button>
+      <button class="zone zone-confirmar" data-zone="confirmar" onclick="selectDeliveryZone('confirmar')">
+        <span>🗺️ Fuera de zona</span>
+        <strong>Confirmar</strong>
+      </button>
+    </div>
+    <div class="delivery-panel">
+      <p class="delivery-kicker">Zona seleccionada</p>
+      <h3 id="delivery-zone-name">Sin seleccionar</h3>
+      <p id="delivery-zone-desc">Elige una zona del mapa para marcar el cobro de envío en tu pedido.</p>
+      <div class="delivery-cost">
+        <span>Costo de envío</span>
+        <strong id="delivery-zone-price">$—</strong>
+      </div>
+      <p class="delivery-note">Si tu colonia no entra en estas zonas, el envío se confirma por WhatsApp antes de preparar tu pedido.</p>
+    </div>
+  </div>
+</section>
+
+<!-- OLA 3 -->
+<div class="ola" style="background:#FFF8E1;">
+  <svg viewBox="0 0 1440 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,20 C360,65 1080,5 1440,45 L1440,70 L0,70 Z" fill="#023E8A"/>
+  </svg>
+</div>
+
+<!-- POR QUÉ -->
+<section id="nosotros">
+  <div class="section-header">
+    <span class="section-tag">💙 ¿Por qué Alchile?</span>
+    <h2 class="section-h2">Sabor de mar, hecho aquí</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <p class="feat-title">Ingredientes frescos</p>
+      <p class="feat-text">Mariscos frescos traídos directo para ti. Sin conservadores, sin congelados. Puro sabor natural.</p>
+    </div>
+    <div class="feature-card">
+      <p class="feat-title">Receta artesanal</p>
+      <p class="feat-text">Cada porción es preparada al momento con cariño y recetas que tienen el sazón de casa.</p>
+    </div>
+    <div class="feature-card">
+      <p class="feat-title">Entrega a domicilio</p>
+      <p class="feat-text">Te llevamos tu pedido en Querétaro en menos de 24 horas, fresco y listo para disfrutar.</p>
+    </div>
+    <div class="feature-card">
+      <p class="feat-title">Atención directa</p>
+      <p class="feat-text">Hablamos contigo por WhatsApp. Pedidos personalizados, porciones grandes para eventos, lo que necesites.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PEDIDOS -->
+<section id="pedidos">
+  <div class="section-header">
+    <span class="section-tag" style="background:rgba(0,60,130,0.1);">📲 Haz tu pedido</span>
+    <h2 class="section-h2" style="color:var(--mar-oscuro);">¿Se te antojó?</h2>
+  </div>
+  <div class="order-layout">
+    <div class="order-deco">
+      <h3>¡Pedidos con gusto!</h3>
+      <p>Agrega productos al carrito o llena este pedido rápido. Te abrimos WhatsApp con el mensaje listo para confirmar.</p>
+      <button class="btn-wa-inline" onclick="abrirWA('Hola! Quiero hacer un pedido directo de Aguachiles Alchile 🦐')">Pedir directo por WhatsApp</button>
+      <div>
+        <span class="contact-pill">📍 Querétaro, México</span>
+        <span class="contact-pill">📱 (442) 632-1413</span>
+        <span class="contact-pill">📸 @aguachilesalchile</span>
+      </div>
+    </div>
+    <div>
+      <form class="order-form" id="orderForm" onsubmit="handleOrder(event)">
+        <div class="form-group">
+          <label>Tu nombre</label>
+          <input type="text" id="inp-nombre" placeholder="¿Cómo te llamamos?" required>
+        </div>
+        <div class="form-group">
+          <label>Tu WhatsApp</label>
+          <input type="tel" id="inp-telefono" placeholder="442 000 0000" required>
+        </div>
+        <div class="form-group">
+          <label>¿Qué quieres pedir?</label>
+          <select id="inp-producto" required>
+            <!--PRECIOS-->
+            <option value="">Elige el estilo</option>
+            <option>Camarón Negro — $150</option>
+            <option>Camarón Rojo — $140</option>
+            <option>Camarón Verde — $140</option>
+            <option>Camarón Ceniza — $160</option>
+            <option>── Paquetes ──</option>
+            <option>Paquete DUO (2 porciones individuales) — $265 + envío</option>
+            <option>Paquete Familiar (3 porciones grandes) — $670 + envío</option>
+            <option>Paquete Degustación (3 porciones individuales) — $390 + envío</option>
+            <option>Paquete Personalizado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Porciones</label>
+          <input type="number" id="inp-porciones" min="1" placeholder="¿Cuántas?" required>
+        </div>
+        <div class="form-group">
+          <label>Zona de envío</label>
+          <select id="inp-zona-envio" onchange="selectDeliveryZone(this.value)">
+            <option value="">Elige tu zona</option>
+            <option value="centro">Centro histórico / zona cercana — $35</option>
+            <option value="sur">Corregidora / Candiles — $50</option>
+            <option value="norte">Juriquilla / Antea — $55</option>
+            <option value="este">El Refugio / Zibatá — $60</option>
+            <option value="confirmar">Fuera de zona — por confirmar</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>¿Dónde te lo llevamos?</label>
+          <textarea id="inp-direccion" placeholder="Calle, colonia, referencias…"></textarea>
+        </div>
+        <button type="submit" class="btn-submit">
+          Enviar pedido por WhatsApp
+        </button>
+      </form>
+      <div class="form-success" id="successMsg">
+        Se abrió WhatsApp con tu pedido. Confirma el mensaje y en breve te atendemos.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-logo">🦐 Aguachiles Alchile</span>
+  <p class="footer-copy">© 2026 Aguachiles Alchile · Hecho con 💙 en Querétaro, México</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
+
